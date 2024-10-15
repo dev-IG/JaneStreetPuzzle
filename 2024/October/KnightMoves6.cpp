@@ -4,6 +4,7 @@
 
 #include "KnightMoves6.h"
 
+#include <algorithm>
 #include <iostream>
 #include <map>
 #include <set>
@@ -109,7 +110,7 @@ int main()
     std::vector<std::string> currPath{"{A1,A}"};
     visitedCoors.emplace("A1");
     getValidMoves(board, knightMoves, visitedCoors, 0, 0, board.size() - 1, board[0].size() - 1, currPath, firstPath,
-                  10);
+                  20);
 
     visitedCoors.erase("A1");
     currPath.pop_back();
@@ -117,7 +118,7 @@ int main()
     visitedCoors.emplace("A6");
     currPath.emplace_back("{A6,A}");
     getValidMoves(board, knightMoves, visitedCoors, board.size() - 1, 0, 0, board[0].size() - 1, currPath, secondPath,
-                  10);
+                  20);
 
 
     std::map<int, std::string> result{};
@@ -152,18 +153,24 @@ int main()
 
                     if (!validPathsForFirst.empty() && !validPathsForSecond.empty())
                     {
+                        std::sort(validPathsForFirst.begin(), validPathsForFirst.end(),
+                                  [](const std::string& n1, const std::string& n2) { return n1.size() < n2.size(); });
+                        std::sort(validPathsForSecond.begin(), validPathsForSecond.end(),
+                                  [](const std::string& n1, const std::string& n2) { return n1.size() < n2.size(); });
+
+                        // Append only the first (shortest) path from each set
                         std::string val{};
                         val.append("Answer is A = " + std::to_string(a) +
                             " B = " + std::to_string(b) +
                             " C = " + std::to_string(c) + "\n");
 
+                        val.append("Valid Path for the First One: \n");
+                        val.append(validPathsForFirst.front() + "\n"); // First (shortest) path
 
-                        val.append("Valid Paths for the First One: \n");
-                        for (auto& path : validPathsForFirst) val.append(path + "\n");
+                        val.append("Valid Path for the Second One: \n");
+                        val.append(validPathsForSecond.front() + "\n"); // First (shortest) path
 
-                        val.append("Valid Paths for the Second One: \n");
-                        for (auto& path : validPathsForSecond) val.append(path + "\n");
-
+                        // Store the result in the map
                         int key = a + b + c;
                         result[key] = val;
                     }
