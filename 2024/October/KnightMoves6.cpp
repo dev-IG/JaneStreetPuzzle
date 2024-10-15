@@ -5,6 +5,7 @@
 #include "KnightMoves6.h"
 
 #include <iostream>
+#include <map>
 #include <set>
 #include <vector>
 #include <string>
@@ -108,7 +109,7 @@ int main()
     std::vector<std::string> currPath{"{A1,A}"};
     visitedCoors.emplace("A1");
     getValidMoves(board, knightMoves, visitedCoors, 0, 0, board.size() - 1, board[0].size() - 1, currPath, firstPath,
-                  20);
+                  10);
 
     visitedCoors.erase("A1");
     currPath.pop_back();
@@ -116,7 +117,10 @@ int main()
     visitedCoors.emplace("A6");
     currPath.emplace_back("{A6,A}");
     getValidMoves(board, knightMoves, visitedCoors, board.size() - 1, 0, 0, board[0].size() - 1, currPath, secondPath,
-                  20);
+                  10);
+
+
+    std::map<int, std::string> result{};
 
     for (int a = 1; a < 50; ++a)
     {
@@ -146,19 +150,34 @@ int main()
                         if (equal2024(valueMapping, path)) validPathsForSecond.emplace_back(path);
                     }
 
-                    if (validPathsForFirst.size() > 0 && validPathsForSecond.size() > 0)
+                    if (!validPathsForFirst.empty() && !validPathsForSecond.empty())
                     {
-                        std::cout << "Using the following values: " << "A: " << a << " B: " << b << " C: " << c <<
-                            std::endl;
+                        std::string val{};
+                        val.append("Answer is A = " + std::to_string(a) +
+                            " B = " + std::to_string(b) +
+                            " C = " + std::to_string(c) + "\n");
 
-                        std::cout << "Valid Paths for the First One: " << std::endl;
-                        for (auto& path : validPathsForFirst) std::cout << path << std::endl;
 
-                        std::cout << "Valid Paths for the Second One: " << std::endl;
-                        for (auto& path : validPathsForSecond) std::cout << path << std::endl;
+                        val.append("Valid Paths for the First One: \n");
+                        for (auto& path : validPathsForFirst) val.append(path + "\n");
+
+                        val.append("Valid Paths for the Second One: \n");
+                        for (auto& path : validPathsForSecond) val.append(path + "\n");
+
+                        int key = a + b + c;
+                        result[key] = val;
                     }
                 }
             }
+        }
+    }
+
+    if (!result.empty())
+    {
+        for (const auto& pair : result)
+        {
+            std::cout << pair.first << " " << pair.second << std::endl;
+            break;
         }
     }
     return 0;
